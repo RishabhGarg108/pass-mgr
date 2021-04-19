@@ -1,13 +1,15 @@
 from database import PasswordDB
 from crypto import encrypt, decrypt
 from password_generator import generateRandomPassword
+from authenticate import authenticatePassword, authenticateFace
+
 import pyperclip  # For using clipboard
 from decouple import config  # For storing environment variables
 from texttable import Texttable  # For clearing beautiful tables
 
 # Extracting the environment variables.
 SECRET_KEY = config('SECURITY_KEY')
-ROOT_PASSWORD = config("ROOT_PASSWORD")
+AUTHENTICATION_TYPE = config('AUTHENTICATION_TYPE')
 
 # Initializing database.
 db = PasswordDB()
@@ -79,13 +81,19 @@ def showCommands():
 def cli():
     print("Welcome to the command-line interface of Pass-Mgr.")
     print("I am a locker that will safely store all your passwords.\n")
-    print("To access saved passwords or save new password, enter the root password.")
-    passwd = input(">>>")
 
-    if(passwd == ROOT_PASSWORD):
+    auth = False
+    if AUTHENTICATION_TYPE == '1':
+        print("To access saved passwords or save new password, enter the root password.")
+        auth = authenticatePassword()
+    if AUTHENTICATION_TYPE == '2':
+        print('Authenticating Face.')
+        auth = authenticateFace()
+
+    if(auth):
         print("\n\n\t\tAccess granted!")
     else:
-        print("Wrong Password")
+        print("Invalid authentication.")
         exit()
 
     showCommands()
@@ -110,10 +118,5 @@ def cli():
     exit()
 
 
-
-def main():
-    cli()
-
-
 if __name__ == "__main__":
-    main()
+    cli()

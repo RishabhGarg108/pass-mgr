@@ -5,5 +5,8 @@ env/
 # Databases
 *.db
 
+# Numpy data files
+*.npy
+
 
 .DS_Store
